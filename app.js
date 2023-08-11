@@ -13,7 +13,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://127.0.0.1:27017/userDB");
+mongoose.connect("mongodb+srv://sohanpatharla:sohanpatharla@cluster0.vm3etby.mongodb.net/userDB");
 
 const userSchema=new mongoose.Schema({
     email:String,
