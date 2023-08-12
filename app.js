@@ -8,6 +8,8 @@ const ejs = require("ejs");
 const session=require("express-session");
 const passport=require("passport");
 const passportLocalMongoose=require("passport-local-mongoose");
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate=require("mongoose-find-or-create");
 
 const app = express();
 
@@ -32,6 +34,7 @@ const userSchema=new mongoose.Schema({
 })
 
 userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
 
 const User=new mongoose.model("User",userSchema);
 
@@ -39,6 +42,18 @@ passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.clientID,
+    clientSecret: process.env.clientSecret,
+    callbackURL: "http://localhost:3000/auth/google/secrets"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
 
 app.get("/home",function (req,res) {
    res.render("home"); 
