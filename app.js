@@ -63,8 +63,8 @@ passport.use(new GoogleStrategy({
     userProfileURL:"https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      return cb(err, user);
+    User.findOrCreate({ googleId: profile.id }).then(function (user) {
+      return cb(user);
     });
   }
 ));
@@ -151,7 +151,7 @@ app.get("/login",function (req,res) {
     })
  });
 
-app.listen(3000, function() {
+app.listen(5000, function() {
   console.log("Server started on port 3000");
 });
 
